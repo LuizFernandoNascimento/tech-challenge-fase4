@@ -1,0 +1,24 @@
+# Versões fixadas: o ambiente foi validado com Python 3.12 (o mesmo do Colab).
+# torch, transformers, numpy e pandas NÃO são fixados: o Colab já os traz, e
+# reinstalá-los obrigaria a reiniciar a sessão.
+langchain==0.3.30
+langchain-core==0.3.86
+langchain-community==0.3.31
+langchain-text-splitters==0.3.11
+langchain-chroma==0.2.3
+langchain-huggingface==0.1.2
+langchain-google-genai==2.1.12
+langchain-groq==0.3.8
+langgraph==0.2.76
+chromadb==0.6.3
+sentence-transformers>=3.0
+rank-bm25==0.2.2
+nltk==3.10.4
+bertopic==0.17.4
+umap-learn==0.6.0
+hdbscan==0.8.44
+gensim==4.4.0
+ragas==0.2.15
+datasets>=3.0
+kagglehub>=0.3
+pyarrow>=15

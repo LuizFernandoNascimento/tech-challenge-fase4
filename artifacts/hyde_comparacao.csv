@@ -1,0 +1,9 @@
+criterio,com HyDE,sem HyDE
+categoria beleza_saude,0.2,0.1
+categoria cama_mesa_banho,0.8,0.7
+nota 1 ou 2,0.8,1.0
+nota 4 ou 5,1.0,1.0
+pedido realmente atrasou (datas),0.5,0.5
+tema: elogios ao atendimento,0.8,0.8
+tema: problemas de entrega,1.0,0.9
+tema: qualidade do produto,1.0,1.0

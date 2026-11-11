@@ -1,0 +1,19 @@
+# Chaves de API: nunca versionar
+.env
+*.env
+
+# Dados do Kaggle (baixados pelo notebook)
+data/
+
+# Artefatos regeneráveis ou grandes
+artifacts/chroma/
+artifacts/base_conhecimento.parquet
+artifacts/bertopic.pkl
+artifacts/cache_llm.sqlite
+artifacts/*.faiss
+artifacts/*.npy
+
+__pycache__/
+.ipynb_checkpoints/
+.DS_Store
+*.log

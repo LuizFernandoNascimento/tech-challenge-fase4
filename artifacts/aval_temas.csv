@@ -1,0 +1,13 @@
+tema,config,precisao@10
+problemas de entrega,lexico (BM25),0.6
+problemas de entrega,denso (Chroma),1.0
+problemas de entrega,hibrido (RRF),1.0
+problemas de entrega,hibrido + rerank,0.9
+qualidade do produto,lexico (BM25),0.1
+qualidade do produto,denso (Chroma),1.0
+qualidade do produto,hibrido (RRF),1.0
+qualidade do produto,hibrido + rerank,1.0
+elogios ao atendimento,lexico (BM25),0.1
+elogios ao atendimento,denso (Chroma),0.6
+elogios ao atendimento,hibrido (RRF),0.4
+elogios ao atendimento,hibrido + rerank,0.8

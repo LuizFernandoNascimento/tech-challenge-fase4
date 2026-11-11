@@ -1,0 +1,39 @@
+---
+config:
+  flowchart:
+    curve: linear
+---
+graph TD;
+	__start__([<p>__start__</p>]):::first
+	verificar_entrada(verificar_entrada)
+	verificar_escopo(verificar_escopo)
+	rotear(rotear)
+	analisar_frequencia(analisar_frequencia)
+	transformar(transformar)
+	recuperar(recuperar)
+	julgar(julgar)
+	reescrever(reescrever)
+	gerar(gerar)
+	abster(abster)
+	recusar(recusar)
+	__end__([<p>__end__</p>]):::last
+	__start__ --> verificar_entrada;
+	abster --> __end__;
+	analisar_frequencia --> __end__;
+	gerar --> __end__;
+	recuperar --> julgar;
+	recusar --> __end__;
+	reescrever --> recuperar;
+	transformar --> recuperar;
+	verificar_entrada -.-> recusar;
+	verificar_entrada -.-> verificar_escopo;
+	verificar_escopo -.-> rotear;
+	verificar_escopo -.-> abster;
+	rotear -. &nbsp;frequencia&nbsp; .-> analisar_frequencia;
+	rotear -. &nbsp;rag&nbsp; .-> transformar;
+	julgar -.-> gerar;
+	julgar -.-> reescrever;
+	julgar -.-> abster;
+	classDef default fill:#f2f0ff,line-height:1.2
+	classDef first fill-opacity:0
+	classDef last fill:#bfb6fc

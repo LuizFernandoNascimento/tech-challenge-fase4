@@ -1,0 +1,21 @@
+criterio,config,precisao@10,taxa_base,lift
+pedido realmente atrasou (datas),lexico (BM25),0.6,0.098,6.1
+pedido realmente atrasou (datas),denso (Chroma),0.6,0.098,6.1
+pedido realmente atrasou (datas),hibrido (RRF),0.7,0.098,7.1
+pedido realmente atrasou (datas),hibrido + rerank,0.5,0.098,5.1
+nota 1 ou 2,lexico (BM25),0.5,0.303,1.7
+nota 1 ou 2,denso (Chroma),0.9,0.303,3.0
+nota 1 ou 2,hibrido (RRF),1.0,0.303,3.3
+nota 1 ou 2,hibrido + rerank,1.0,0.303,3.3
+nota 4 ou 5,lexico (BM25),1.0,0.604,1.7
+nota 4 ou 5,denso (Chroma),0.9,0.604,1.5
+nota 4 ou 5,hibrido (RRF),0.9,0.604,1.5
+nota 4 ou 5,hibrido + rerank,1.0,0.604,1.7
+categoria cama_mesa_banho,lexico (BM25),0.6,0.102,5.9
+categoria cama_mesa_banho,denso (Chroma),0.8,0.102,7.9
+categoria cama_mesa_banho,hibrido (RRF),0.6,0.102,5.9
+categoria cama_mesa_banho,hibrido + rerank,0.7,0.102,6.9
+categoria beleza_saude,lexico (BM25),0.2,0.08,2.5
+categoria beleza_saude,denso (Chroma),0.0,0.08,0.0
+categoria beleza_saude,hibrido (RRF),0.0,0.08,0.0
+categoria beleza_saude,hibrido + rerank,0.1,0.08,1.2
