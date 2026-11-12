@@ -60,8 +60,23 @@ def neutralizar(texto: str) -> str:
     return t
 
 
-def validar_citacoes(ids_citados: list[str], ids_recuperados: set[str]) -> tuple[list[str], list[str]]:
-    """Separa citações válidas das inventadas pelo modelo."""
-    validos = [i for i in ids_citados if i in ids_recuperados]
-    invalidos = [i for i in ids_citados if i not in ids_recuperados]
+def validar_citacoes(ids_citados: list[str], ids_recuperados: set[str],
+                     texto: str = "") -> tuple[list[str], list[str]]:
+    """Separa citações válidas das inventadas pelo modelo.
+
+    Confere o campo estruturado E os ids escritos no próprio texto da resposta.
+    Medimos que o modelo às vezes cita no texto ids que não repete no campo
+    estruturado (37 casos na bateria, D22); conferir só o campo deixaria
+    passar um id inventado escrito no texto.
+    """
+    todos = list(dict.fromkeys(list(ids_citados) + re.findall(r"doc_\d{6}", texto or "")))
+    validos = [i for i in todos if i in ids_recuperados]
+    invalidos = [i for i in todos if i not in ids_recuperados]
     return validos, invalidos
+
+
+def remover_citacoes(texto: str, invalidos: list[str]) -> str:
+    """Tira do texto as citações inválidas, marcando onde estavam."""
+    for i in invalidos:
+        texto = texto.replace(i, "citação removida")
+    return texto

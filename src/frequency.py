@@ -23,11 +23,12 @@ from __future__ import annotations
 
 import re
 
+
 import pandas as pd
 from langchain_core.prompts import ChatPromptTemplate
 from pydantic import BaseModel, Field
 
-from src.guardrails import neutralizar
+from src.guardrails import neutralizar, remover_citacoes, validar_citacoes
 from src.retrieval import _atende
 from src.topics import SEM_TOPICO, tabela_frequencia
 
@@ -55,7 +56,7 @@ def polaridade(pergunta: str) -> tuple[str, dict | None]:
         return "avaliações negativas (nota 1 ou 2)", {"nota_media": {"$lte": 2}}
     if pos and not neg:
         return "avaliações positivas (nota 4 ou 5)", {"nota_media": {"$gte": 4}}
-    return "todas as avaliações", None
+    return "avaliações (todas as notas)", None
 
 
 def _combinar(*filtros):
@@ -135,8 +136,9 @@ def analisar(pergunta: str, base: pd.DataFrame, info: pd.DataFrame, banco, embed
     validos = set(temas["topico"])
     sel = [t for t in saida.ids_topicos if t in validos]
     temas_invalidos = [t for t in saida.ids_topicos if t not in validos]
-    ids_ok = [i for i in saida.ids_evidencias if i in exemplos]
-    ids_inv = [i for i in saida.ids_evidencias if i not in exemplos]
+    # Confere também os ids escritos na síntese, não só o campo estruturado.
+    ids_ok, ids_inv = validar_citacoes(saida.ids_evidencias, set(exemplos), saida.sintese)
+    saida.sintese = remover_citacoes(saida.sintese, ids_inv)
     sem_ids = re.sub(r"doc_\d+", "", saida.sintese)
     numeros_no_texto = re.findall(r"\d+[.,]?\d*\s*%?", sem_ids)
 

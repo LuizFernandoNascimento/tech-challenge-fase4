@@ -158,3 +158,42 @@ def avaliar_ragas(resultados: list[dict], llm, embeddings, max_contextos: int = 
     df.insert(0, "rota", [r.get("rota") for r in validos])
     df.insert(0, "rotulo", [r.get("rotulo") for r in validos])
     return df
+
+
+def contextos_do_gerador(resultados: list[dict], documentos) -> list[dict]:
+    """Troca os contextos "só texto" pelo contexto EXATO que o gerador recebeu.
+
+    O gerador vê cada avaliação com seus metadados (id, nota, categoria, nº de
+    clientes que a relataram, atraso) - ver generation.formatar_contexto. Um
+    juiz que recebe só o texto marca como "sem suporte" afirmações corretas
+    como "Automotivo: leve e confortável", porque não vê a categoria. Medir
+    fidelidade exige dar ao juiz o mesmo material que o gerador teve.
+    """
+    from src.generation import formatar_contexto
+    import re
+    por_texto = {d.page_content: d for d in documentos}
+    por_id = {d.metadata["doc_id"]: d for d in documentos}
+    saida = []
+    for r in resultados:
+        docs = [por_texto[c] for c in r["contextos"]]
+        # Avaliações citadas no texto mas ausentes do campo estruturado (D22):
+        # foram mostradas ao gerador como exemplos, então entram no contexto.
+        vistos = {d.metadata["doc_id"] for d in docs}
+        docs += [por_id[i] for i in dict.fromkeys(re.findall(r"doc_\d{6}", r["resposta"]))
+                 if i not in vistos and i in por_id]
+        saida.append({**r, "contextos": [formatar_contexto([d]) for d in docs]})
+    return saida
+
+
+def avaliar_fidelidade(resultados: list[dict], llm, run_config=None) -> list[float]:
+    """Só a métrica de fidelidade (Faithfulness), com todos os contextos."""
+    from datasets import Dataset
+    from ragas import evaluate
+    from ragas.llms import LangchainLLMWrapper
+    from ragas.metrics import Faithfulness
+
+    dados = Dataset.from_list([{"user_input": r["pergunta"], "response": _texto_do_llm(r),
+                                "retrieved_contexts": r["contextos"]} for r in resultados])
+    rel = evaluate(dados, metrics=[Faithfulness()], llm=LangchainLLMWrapper(llm),
+                   run_config=run_config, show_progress=False)
+    return rel.to_pandas()["faithfulness"].tolist()

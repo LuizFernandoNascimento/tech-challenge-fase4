@@ -494,3 +494,71 @@ desligado por pergunta: `perguntar(..., usar_hyde=False)`.
 
 **Limite:** 8 casos é amostra pequena; o resultado indica "sem efeito
 detectável", não "efeito nulo".
+
+### D22 — RAGAS: o que medimos, dois erros de medição e uma falha real
+
+**Como:** as 20 respostas da bateria (D20) que foram respondidas, avaliadas
+com RAGAS 0.2 (`scripts/rodar_ragas.py`). Juiz: `gpt-oss-120b` no Groq —
+**outro provedor** que não o Gemini que gerou as respostas. Três métricas, sem
+resposta-referência (não inventamos gabarito): fidelidade (*faithfulness*),
+relevância da resposta e precisão de contexto sem referência.
+
+**Primeira medição:**
+
+| Rota | Fidelidade | Relevância da resposta | Precisão de contexto |
+|---|---|---|---|
+| RAG (8 respostas) | 0,699 | 0,801 | 0,778 |
+| Frequência (12) | 0,876 | 0,751 | 0,568 |
+| **Geral (20)** | **0,805** | **0,771** | **0,652** |
+
+Quatro respostas tiveram fidelidade baixa (0,00, 0,22, 0,38, 0,50). Fomos ver
+uma por uma antes de aceitar o número.
+
+**Erro de medição 1 — o juiz não via o que o gerador via.** Na resposta com
+0,00, o texto diz *"Automotivo: leve e confortável [doc_022677]"*, e a avaliação
+diz *"leve e super confortável"*, com `categoria="automotivo"` nos metadados.
+O gerador recebe cada avaliação **com** seus metadados (nota, categoria, nº de
+clientes, atraso — `formatar_contexto`); o juiz recebeu **só o texto**. Sem ver a
+categoria, ele marcou como "sem suporte" toda afirmação do tipo "Categoria X:
+...". O mesmo com *"compartilhado por 2 clientes"*, que vem do metadado
+`relatada_por`.
+
+**Erro de medição 2 — citações fora do campo estruturado.** Numa resposta de
+frequência, o texto citava **51** avaliações, mas o campo estruturado
+`ids_evidencias` listava 20 — e só essas 20 iam para o juiz. Verificamos as 37
+citações "extras" da bateria: **todas existem e pertencem aos tópicos que o
+modelo escolheu** (eram exemplos que ele recebeu), mas o juiz não as viu.
+
+**Correção da medição** (`scripts/rodar_fidelidade_contexto.py`): o juiz
+recebe exatamente o contexto do gerador — texto + metadados — incluindo as
+avaliações citadas no texto.
+
+| Nas mesmas 14 respostas | Fidelidade |
+|---|---|
+| Juiz com só o texto | 0,877 |
+| **Juiz com o contexto do gerador** | **0,954** |
+
+As respostas da rota RAG com 0,22 e 0,50 passaram a **1,00**.
+
+**A falha real que a medição revelou:** a validação de citações (guardrail)
+conferia **só o campo estruturado**. Um id inventado escrito no texto passaria.
+Não aconteceu na bateria (as 37 citações extras eram válidas), mas o buraco
+existia. **Corrigido:** `validar_citacoes` agora confere também todo `doc_…`
+escrito no texto, nas duas rotas, e uma citação inválida é removida do texto
+(*"citação removida"*) e reportada em `ids_invalidos`.
+
+**Status — medição incompleta, e por quê:** a fidelidade com o contexto do
+gerador cobre **14 de 20** respostas. As 6 restantes esbarraram de novo no teto
+de **200 mil tokens/dia** do Groq (D5): as respostas de frequência levam até 60
+avaliações de contexto, e cada verificação é longa. O teto é uma janela móvel
+de 24 h; as 6 serão completadas quando a cota liberar
+(`python -m scripts.rodar_fidelidade_contexto` — as 14 já feitas vêm do cache).
+
+**Leitura das outras métricas:** a precisão de contexto é menor na rota de
+frequência (0,568) por construção: lá o contexto são **exemplos de cada tema**
+escolhido, e o juiz pergunta se cada exemplo, isoladamente, é útil para a
+pergunta — um exemplo de "entrega antecipada" é pouco útil para "quais
+problemas...", mesmo sendo legítimo dentro da tabela de temas.
+
+**A lição:** um número baixo de RAGAS pode ser defeito do sistema **ou** da
+medição. Aqui foram os dois — e só olhando caso a caso foi possível separar.

@@ -43,7 +43,7 @@ from src.generation import (PROMPT_HYDE, PROMPT_STEPBACK, Julgamento,
 from src.llm import RastreadorModelos
 from src.frequency import (PROMPT_FREQUENCIA, SelecaoTopicos, analisar as analisar_freq,
                            e_pergunta_de_frequencia)
-from src.guardrails import detectar_injecao, validar_citacoes
+from src.guardrails import detectar_injecao, remover_citacoes, validar_citacoes
 
 logger = logging.getLogger(__name__)
 
@@ -183,9 +183,9 @@ def construir_grafo(recuperador, gerador=None, julgador_llm=None, auxiliar=None,
         saida, modelos = _chamar(cadeia_resposta, {"contexto": formatar_contexto(e["relevantes"]),
                                                    "pergunta": e["pergunta"]})
         recuperados = {d.metadata["doc_id"] for d in e["relevantes"]}
-        validos, invalidos = validar_citacoes(saida.ids_evidencias, recuperados)
+        validos, invalidos = validar_citacoes(saida.ids_evidencias, recuperados, saida.resposta)
         status = "respondida" if saida.evidencia_suficiente and validos else "sem_evidencia"
-        return {"resposta": saida.resposta, "ids_evidencias": validos,
+        return {"resposta": remover_citacoes(saida.resposta, invalidos), "ids_evidencias": validos,
                 "ids_invalidos": invalidos, "limitacoes": saida.limitacoes,
                 "status": status, "trilha": e["trilha"] + [f"gerar:{status}[{modelos}]"]}
 
