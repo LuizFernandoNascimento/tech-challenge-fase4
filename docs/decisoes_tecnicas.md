@@ -533,12 +533,19 @@ modelo escolheu** (eram exemplos que ele recebeu), mas o juiz não as viu.
 recebe exatamente o contexto do gerador — texto + metadados — incluindo as
 avaliações citadas no texto.
 
-| Nas mesmas 14 respostas | Fidelidade |
-|---|---|
-| Juiz com só o texto | 0,877 |
-| **Juiz com o contexto do gerador** | **0,954** |
+| Rota | Juiz com só o texto | **Juiz com o contexto do gerador** |
+|---|---|---|
+| RAG (8 respostas) | 0,699 | **1,000** |
+| Frequência (12) | 0,876 | **0,884** |
+| **Geral (20)** | 0,805 | **0,930** |
 
-As respostas da rota RAG com 0,22 e 0,50 passaram a **1,00**.
+As respostas da rota RAG com 0,00, 0,22 e 0,50 passaram a **1,00**; a de
+frequência que citava 51 avaliações, de 0,38 para **1,00**.
+
+**O que ficou abaixo de 1 na rota de frequência** (0,67 a 0,94) é síntese que
+generaliza além dos exemplos mostrados — por exemplo, atribuir a um tema inteiro
+uma característica que só alguns exemplos trazem. É o ponto fraco honesto da
+rota: os números vêm do código, mas a frase que resume cada tema é do LLM.
 
 **A falha real que a medição revelou:** a validação de citações (guardrail)
 conferia **só o campo estruturado**. Um id inventado escrito no texto passaria.
@@ -547,12 +554,10 @@ existia. **Corrigido:** `validar_citacoes` agora confere também todo `doc_…`
 escrito no texto, nas duas rotas, e uma citação inválida é removida do texto
 (*"citação removida"*) e reportada em `ids_invalidos`.
 
-**Status — medição incompleta, e por quê:** a fidelidade com o contexto do
-gerador cobre **14 de 20** respostas. As 6 restantes esbarraram de novo no teto
-de **200 mil tokens/dia** do Groq (D5): as respostas de frequência levam até 60
-avaliações de contexto, e cada verificação é longa. O teto é uma janela móvel
-de 24 h; as 6 serão completadas quando a cota liberar
-(`python -m scripts.rodar_fidelidade_contexto` — as 14 já feitas vêm do cache).
+**Execução:** a medição precisou de três janelas de cota — o teto de **200 mil
+tokens/dia** do Groq (D5) estourou duas vezes, porque as respostas de frequência
+levam até 60 avaliações de contexto. O cache fez cada retomada continuar de onde
+parou, sem repetir julgamentos.
 
 **Leitura das outras métricas:** a precisão de contexto é menor na rota de
 frequência (0,568) por construção: lá o contexto são **exemplos de cada tema**

@@ -103,7 +103,7 @@ Resultado: **33.332 documentos**.
 
 - **Bateria de 30 perguntas** — todas as 18 perguntas citadas no enunciado + casos de abstenção, injeção e metadados: **30/30 com o desfecho esperado** (D20).
 - **Recuperação** — Precisão@10 com gabarito por metadado: 1,0 para "clientes insatisfeitos" (taxa-base 0,30) com busca híbrida.
-- **RAGAS** (20 respostas, juiz de outro provedor): fidelidade 0,805, relevância da resposta 0,771, precisão de contexto 0,652. Medindo a fidelidade contra o **mesmo contexto que o gerador recebeu** (texto + metadados), sobe para **0,954** (14 de 20 respostas medidas; as demais aguardam cota do juiz). A análise caso a caso revelou e corrigiu uma falha real na validação de citações (D22).
+- **RAGAS** (20 respostas, juiz de outro provedor): fidelidade 0,805, relevância da resposta 0,771, precisão de contexto 0,652. Medindo a fidelidade contra o **mesmo contexto que o gerador recebeu** (texto + metadados), sobe para **0,930** (1,000 na rota RAG; 0,884 na de frequência). A análise caso a caso revelou e corrigiu uma falha real na validação de citações (D22).
 - **HyDE** — medido: sem ganho detectável (0,750 → 0,762); mantido por custo quase nulo e para demonstrar a transformação (D21).
 
 ## Exemplos
