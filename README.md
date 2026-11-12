@@ -11,7 +11,7 @@ quando as avaliações não sustentam uma resposta.
 ## Como executar
 
 **Google Colab (recomendado)** — abra
-[`notebooks/tech_challenge_fase4.ipynb`](notebooks/tech_challenge_fase4.ipynb) no Colab e siga a
+[`notebooks/tech_challenge_fase4_v2.ipynb`](notebooks/tech_challenge_fase4_v2.ipynb) no Colab e siga a
 primeira célula de texto: cadastrar `GOOGLE_API_KEY` e `GROQ_API_KEY` no painel
 **Secrets** (🔑) e executar tudo. O notebook clona este repositório, instala as
 dependências e baixa o dataset do Kaggle (público, sem login).
@@ -20,7 +20,7 @@ dependências e baixa o dataset do Kaggle (público, sem login).
 
 ```bash
 pip install -r requirements.txt
-jupyter notebook notebooks/tech_challenge_fase4.ipynb
+jupyter notebook notebooks/tech_challenge_fase4_v2.ipynb
 ```
 
 As chaves são lidas do painel Secrets (Colab) ou de um arquivo `.env`
@@ -121,7 +121,8 @@ Saída completa da bateria: [`artifacts/bateria_saida.txt`](artifacts/bateria_sa
 ## Estrutura
 
 ```
-├── notebooks/tech_challenge_fase4.ipynb   # demonstração ponta a ponta (Colab)
+├── notebooks/tech_challenge_fase4_v2.ipynb            # demonstração ponta a ponta (Colab)
+├── notebooks/tech_challenge_fase4_executado_v2.ipynb  # mesma, já executada, com as saídas
 ├── src/                                   # pipeline
 │   ├── config.py          constantes e justificativas
 │   ├── preprocessing.py   pipelines leve e agressivo
